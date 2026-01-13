@@ -100,12 +100,24 @@ function updateUI() {
 }
 
 // Auto Popper Logic
+let lastAutoPopTime = Date.now();
+
 setInterval(() => {
-    if (autoPoppers > 0) {
-        chillPoints += autoPoppers;
-        updateUI();
+    const now = Date.now();
+    const delta = now - lastAutoPopTime;
+
+    if (delta >= 1000) {
+        const secondsPassed = Math.floor(delta / 1000);
+        
+        if (autoPoppers > 0) {
+            chillPoints += autoPoppers * secondsPassed;
+            updateUI();
+        }
+        
+        // Advance time in 1000ms increments to keep remainder
+        lastAutoPopTime += secondsPassed * 1000;
     }
-}, 1000);
+}, 100);
 
 // Shop Logic
 document.getElementById('buy-auto-popper').addEventListener('click', () => {
