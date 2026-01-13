@@ -69,7 +69,7 @@ h1 {
   }
   100% {
     /* Fall down */
-    transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) + 400px))
+    transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) + 800px))
       rotate(var(--rot)) scale(0.8);
     opacity: 0;
   }
