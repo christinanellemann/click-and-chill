@@ -74,18 +74,28 @@ let chillPoints = 0;
 let activeTimeout;
 let autoPoppers = 0;
 const autoPopperCost = 250;
+let clickPower = 1;
+const clickUpgradeCost = 100;
 
 // Update UI including shop buttons
 function updateUI() {
     counterElement.textContent = count;
     chillPointsElement.textContent = Math.floor(chillPoints);
     document.getElementById('auto-popper-count').textContent = autoPoppers;
+    document.getElementById('click-power-count').textContent = clickPower;
     
     const buyBtn = document.getElementById('buy-auto-popper');
     if (chillPoints >= autoPopperCost) {
         buyBtn.classList.remove('disabled');
     } else {
         buyBtn.classList.add('disabled');
+    }
+
+    const buyClickBtn = document.getElementById('buy-click-upgrade');
+    if (chillPoints >= clickUpgradeCost) {
+        buyClickBtn.classList.remove('disabled');
+    } else {
+        buyClickBtn.classList.add('disabled');
     }
 }
 
@@ -107,6 +117,15 @@ document.getElementById('buy-auto-popper').addEventListener('click', () => {
     }
 });
 
+document.getElementById('buy-click-upgrade').addEventListener('click', () => {
+    if (chillPoints >= clickUpgradeCost) {
+        chillPoints -= clickUpgradeCost;
+        clickPower++;
+        updateUI();
+        saveGame(); // Save on purchase
+    }
+});
+
 // Activate immediately on press
 circle.addEventListener('mousedown', () => {
     circle.classList.add('active');
@@ -121,7 +140,7 @@ circle.addEventListener('click', (e) => {
     playPopSound();
     count++;
     
-    chillPoints++;
+    chillPoints += clickPower;
     updateUI();
 
     // Extend active state after release
@@ -292,6 +311,7 @@ function saveGame() {
         chillPoints: chillPoints,
         isSoundEnabled: isSoundEnabled,
         autoPoppers: autoPoppers,
+        clickPower: clickPower,
         backgroundColor: document.body.style.backgroundColor
     };
     localStorage.setItem('clickAndChillSave', JSON.stringify(gameData));
@@ -322,6 +342,10 @@ function loadGame() {
 
         if (gameData.autoPoppers) {
             autoPoppers = gameData.autoPoppers;
+        }
+
+        if (gameData.clickPower) {
+            clickPower = gameData.clickPower;
         }
         
         updateUI();
