@@ -72,6 +72,78 @@ updateRender();
 let count = 0;
 let chillPoints = 0;
 let activeTimeout;
+let autoPoppers = 0;
+const autoPopperCost = 250;
+
+// Update UI including shop buttons
+function updateUI() {
+    counterElement.textContent = count;
+    chillPointsElement.textContent = Math.floor(chillPoints);
+    document.getElementById('auto-popper-count').textContent = autoPoppers;
+    
+    const buyBtn = document.getElementById('buy-auto-popper');
+    if (chillPoints >= autoPopperCost) {
+        buyBtn.classList.remove('disabled');
+    } else {
+        buyBtn.classList.add('disabled');
+    }
+}
+
+// Auto Popper Logic
+setInterval(() => {
+    if (autoPoppers > 0) {
+        chillPoints += autoPoppers;
+        updateUI();
+    }
+}, 1000);
+
+// Shop Logic
+document.getElementById('buy-auto-popper').addEventListener('click', () => {
+    if (chillPoints >= autoPopperCost) {
+        chillPoints -= autoPopperCost;
+        autoPoppers++;
+        updateUI();
+        saveGame(); // Save on purchase
+    }
+});
+
+// Activate immediately on press
+circle.addEventListener('mousedown', () => {
+    circle.classList.add('active');
+    if (activeTimeout) clearTimeout(activeTimeout);
+});
+circle.addEventListener('touchstart', () => {
+    circle.classList.add('active');
+    if (activeTimeout) clearTimeout(activeTimeout);
+}, { passive: true });
+
+circle.addEventListener('click', (e) => {
+    playPopSound();
+    count++;
+    
+    chillPoints++;
+    updateUI();
+
+    // Extend active state after release
+    circle.classList.add('active');
+    if (activeTimeout) {
+        clearTimeout(activeTimeout);
+    }
+    activeTimeout = setTimeout(() => {
+        circle.classList.remove('active');
+    }, 1000);
+
+    // Create particle
+    // Start from center of circle (approx)
+    const rect = circle.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Spawn slightly above center to look like it popped out
+    createPhysicsCorn(centerX, centerY - 50);
+});
+
+
 
 // Audio Context for synthetic pop sound
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -172,43 +244,6 @@ function playPopSound() {
     oscillator.stop(t + 0.1);
 }
 
-// Activate immediately on press
-circle.addEventListener('mousedown', () => {
-    circle.classList.add('active');
-    if (activeTimeout) clearTimeout(activeTimeout);
-});
-circle.addEventListener('touchstart', () => {
-    circle.classList.add('active');
-    if (activeTimeout) clearTimeout(activeTimeout);
-}, { passive: true });
-
-circle.addEventListener('click', (e) => {
-    playPopSound();
-    count++;
-    counterElement.textContent = count;
-
-    chillPoints++;
-    chillPointsElement.textContent = chillPoints;
-
-    // Extend active state after release
-    circle.classList.add('active');
-    if (activeTimeout) {
-        clearTimeout(activeTimeout);
-    }
-    activeTimeout = setTimeout(() => {
-        circle.classList.remove('active');
-    }, 1000);
-
-    // Create particle
-    // Start from center of circle (approx)
-    const rect = circle.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    // Spawn slightly above center to look like it popped out
-    createPhysicsCorn(centerX, centerY - 50);
-});
-
 function createPhysicsCorn(x, y) {
     const size = 100; 
     const radius = size / 2;
@@ -256,6 +291,7 @@ function saveGame() {
         count: count,
         chillPoints: chillPoints,
         isSoundEnabled: isSoundEnabled,
+        autoPoppers: autoPoppers,
         backgroundColor: document.body.style.backgroundColor
     };
     localStorage.setItem('clickAndChillSave', JSON.stringify(gameData));
@@ -269,12 +305,10 @@ function loadGame() {
         // Restore values
         if (gameData.count) {
             count = gameData.count;
-            counterElement.textContent = count;
         }
         
         if (gameData.chillPoints) {
             chillPoints = gameData.chillPoints;
-            chillPointsElement.textContent = chillPoints;
         }
         
         if (typeof gameData.isSoundEnabled !== 'undefined') {
@@ -285,6 +319,12 @@ function loadGame() {
         if (gameData.backgroundColor) {
             document.body.style.backgroundColor = gameData.backgroundColor;
         }
+
+        if (gameData.autoPoppers) {
+            autoPoppers = gameData.autoPoppers;
+        }
+        
+        updateUI();
     }
 }
 

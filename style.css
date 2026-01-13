@@ -180,6 +180,106 @@ h1 {
   background-color: #ff6b81;
 }
 
+.shop-panel {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 260px;
+  z-index: 20;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+}
+
+.shop-panel h2 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  transition: transform 0.1s;
+}
+
+.shop-item:hover {
+  transform: scale(1.02);
+}
+
+.shop-item-icon {
+  font-size: 2rem;
+  margin-right: 15px;
+}
+
+.shop-item-details {
+  flex: 1;
+}
+
+.shop-item-name {
+  font-weight: bold;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.shop-item-desc {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.shop-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.shop-btn {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.shop-btn:hover {
+  background-color: #45a049;
+}
+
+.shop-btn:active {
+  transform: scale(0.95);
+}
+
+.shop-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.item-count {
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
 .color-dropdown {
   position: absolute;
   top: 60px;
