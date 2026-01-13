@@ -115,7 +115,7 @@ function createPhysicsCorn(x, y) {
 
     // Create a circular body for the corn
     // Using a circle collider is faster and rolls nicely
-    const body = Bodies.circle(x, y, radius * 0.7, { // 0.7 radius to allow some overlap visually
+    const body = Bodies.circle(x, y, radius * 0.4, { // Smaller radius for more visual overlap
         restitution: 0.4, // Bounciness (0-1)
         friction: 0.5,
         density: 0.002,
