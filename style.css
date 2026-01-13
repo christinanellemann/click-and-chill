@@ -13,10 +13,12 @@ body {
 }
 
 .circle {
-  width: 200px;
-  height: 200px;
-  background-color: red;
-  border-radius: 50%;
+  width: 300px;
+  height: 300px;
+  background-image: url('popcorn.PNG');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   margin: 20px auto;
   cursor: pointer;
   transition: transform 0.1s;
@@ -93,3 +95,4 @@ h1 {
 .click-count {
     font-size: 0.9rem;
     color: #999;
+}
