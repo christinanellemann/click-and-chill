@@ -180,11 +180,36 @@ circle.addEventListener('click', (e) => {
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let isSoundEnabled = true;
 
+// Rain / Lo-fi Music Logic
+let isRainEnabled = false;
+const rainAudio = new Audio('lofi-rain-lofi-music-458077.mp3');
+rainAudio.loop = true;
+rainAudio.volume = 0.5; // Set a comfortable level
+
 const soundToggleBtn = document.getElementById('sound-toggle');
 soundToggleBtn.addEventListener('click', (e) => {
     isSoundEnabled = !isSoundEnabled;
     soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
-    e.stopPropagation(); // Prevent clicking through to other elements if any overlap
+    e.stopPropagation(); 
+});
+
+const rainToggleBtn = document.getElementById('rain-toggle');
+
+function toggleRain() {
+    isRainEnabled = !isRainEnabled;
+    rainToggleBtn.textContent = isRainEnabled ? '🌧️' : '☁️';
+    
+    if (isRainEnabled) {
+        rainAudio.play().catch(e => console.log("Audio play failed (waiting for interaction):", e));
+    } else {
+        rainAudio.pause();
+    }
+}
+
+rainToggleBtn.addEventListener('click', (e) => {
+    toggleRain();
+    saveGame(); 
+    e.stopPropagation();
 });
 
 const bgToggleBtn = document.getElementById('bg-toggle');
@@ -242,6 +267,11 @@ resetGameBtn.addEventListener('click', (e) => {
 
 
 function playPopSound() {
+    // Attempt to start rain if enabled but not playing (e.g. initial touch requirement)
+    if (isRainEnabled && rainAudio.paused) {
+        rainAudio.play().catch(e => { /* Ignore pending play errors */ });
+    }
+
     if (!isSoundEnabled) return;
 
     // Resume context if suspended (browser auto-play policy)
@@ -322,6 +352,7 @@ function saveGame() {
         count: count,
         chillPoints: chillPoints,
         isSoundEnabled: isSoundEnabled,
+        isRainEnabled: isRainEnabled,
         autoPoppers: autoPoppers,
         clickPower: clickPower,
         backgroundColor: document.body.style.backgroundColor
@@ -347,7 +378,12 @@ function loadGame() {
             isSoundEnabled = gameData.isSoundEnabled;
             soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
         }
-        
+
+        if (typeof gameData.isRainEnabled !== 'undefined') {
+            isRainEnabled = gameData.isRainEnabled;
+            rainToggleBtn.textContent = isRainEnabled ? '🌧️' : '☁️';
+        }
+
         if (gameData.backgroundColor) {
             document.body.style.backgroundColor = gameData.backgroundColor;
         }
