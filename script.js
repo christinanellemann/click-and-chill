@@ -84,6 +84,15 @@ soundToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation(); // Prevent clicking through to other elements if any overlap
 });
 
+const colors = ['#DAF0FF', '#FFE0E9', '#E0FFE4', '#FFFFE0', '#F0E0FF'];
+let colorIndex = 0;
+const bgToggleBtn = document.getElementById('bg-toggle');
+bgToggleBtn.addEventListener('click', (e) => {
+    colorIndex = (colorIndex + 1) % colors.length;
+    document.body.style.backgroundColor = colors[colorIndex];
+    e.stopPropagation();
+});
+
 function playPopSound() {
     if (!isSoundEnabled) return;
 
