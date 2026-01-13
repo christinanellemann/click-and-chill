@@ -58,6 +58,7 @@ h1 {
 
 #bottom-ui {
   position: fixed;
+  z-index: 20;
   bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
