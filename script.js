@@ -44,7 +44,7 @@ function createParticle(x, y) {
     particle.classList.add('particle');
     document.body.appendChild(particle);
 
-    const size = 20;
+    const size = 100;
     particle.style.left = `${x - size / 2}px`;
     particle.style.top = `${y - size / 2}px`;
 

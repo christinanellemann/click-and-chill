@@ -40,13 +40,14 @@ h1 {
 
 .particle {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  background-color: red; /* Popcorn yellow */
-  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  background-image: url("corn.PNG");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   pointer-events: none;
   animation: popcorn 0.8s forwards;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes popcorn {
