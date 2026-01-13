@@ -109,7 +109,34 @@ document.addEventListener('click', () => {
     if (!colorDropdown.classList.contains('hidden')) {
         colorDropdown.classList.add('hidden');
     }
+    if (!settingsDropdown.classList.contains('hidden')) {
+        settingsDropdown.classList.add('hidden');
+    }
 });
+
+
+// --- Settings Logic ---
+const settingsToggleBtn = document.getElementById('settings-toggle');
+const settingsDropdown = document.getElementById('settings-dropdown');
+const resetGameBtn = document.getElementById('reset-game-btn');
+
+settingsToggleBtn.addEventListener('click', (e) => {
+    settingsDropdown.classList.toggle('hidden');
+    e.stopPropagation();
+});
+
+resetGameBtn.addEventListener('click', (e) => {
+    if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+        // Block auto-saving during the reload process
+        isResetting = true;
+        
+        // Clear all data
+        localStorage.removeItem('clickAndChillSave');
+        location.reload(); // Reload page to reset state completely
+    }
+    e.stopPropagation();
+});
+
 
 function playPopSound() {
     if (!isSoundEnabled) return;
@@ -220,7 +247,11 @@ function createPhysicsCorn(x, y) {
 }
 
 // --- Save/Load System ---
+let isResetting = false;
+
 function saveGame() {
+    if (isResetting) return;
+
     const gameData = {
         count: count,
         chillPoints: chillPoints,
