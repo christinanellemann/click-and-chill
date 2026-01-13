@@ -335,11 +335,11 @@ function loadGame() {
         const gameData = JSON.parse(savedData);
         
         // Restore values
-        if (gameData.count) {
+        if (typeof gameData.count !== 'undefined') {
             count = gameData.count;
         }
         
-        if (gameData.chillPoints) {
+        if (typeof gameData.chillPoints !== 'undefined') {
             chillPoints = gameData.chillPoints;
         }
         
@@ -352,11 +352,11 @@ function loadGame() {
             document.body.style.backgroundColor = gameData.backgroundColor;
         }
 
-        if (gameData.autoPoppers) {
+        if (typeof gameData.autoPoppers !== 'undefined') {
             autoPoppers = gameData.autoPoppers;
         }
 
-        if (gameData.clickPower) {
+        if (typeof gameData.clickPower !== 'undefined') {
             clickPower = gameData.clickPower;
         }
         
