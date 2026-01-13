@@ -1,0 +1,95 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.container {
+  text-align: center;
+}
+
+.circle {
+  width: 200px;
+  height: 200px;
+  background-color: red;
+  border-radius: 50%;
+  margin: 20px auto;
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none; /* Prevent text selection on rapid clicks */
+}
+
+.circle:active {
+  transform: scale(0.95);
+}
+
+h1 {
+  font-size: 2em;
+  color: #333;
+}
+
+.particle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-color: red; /* Popcorn yellow */
+  border-radius: 50%;
+  pointer-events: none;
+  animation: popcorn 0.8s forwards;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes popcorn {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    opacity: 1;
+  }
+  40% {
+    /* Peak height */
+    transform: translate(var(--tx), var(--ty)) scale(1.1);
+    animation-timing-function: ease-in;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    /* Fall down */
+    transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) + 400px))
+      rotate(var(--rot)) scale(0.8);
+    opacity: 0;
+  }
+}
+
+#bottom-ui {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.chill-points-box {
+    background: white;
+    padding: 15px 30px;
+    border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #555;
+    border: 2px solid #ddd;
+}
+
+.click-count {
+    font-size: 0.9rem;
+    color: #999;
