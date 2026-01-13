@@ -53,12 +53,16 @@ function createParticle(x, y) {
     const destinationX = (Math.random() - 0.5) * 300; 
     // Random height for Y (negative is up)
     const destinationY = -100 - Math.random() * 100;
-    // Random rotation
-    const rotation = Math.random() * 500;
+    
+    // Rotation based on direction
+    const rotation = destinationX * 0.5; // Tilt matches X direction
+    // Random tumbling for the fall
+    const endRotation = rotation + (Math.random() * 720 - 360);
 
     particle.style.setProperty('--tx', `${destinationX}px`);
     particle.style.setProperty('--ty', `${destinationY}px`);
     particle.style.setProperty('--rot', `${rotation}deg`);
+    particle.style.setProperty('--rot-end', `${endRotation}deg`);
 
     particle.addEventListener('animationend', () => {
         particle.remove();

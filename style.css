@@ -52,7 +52,7 @@ h1 {
 
 @keyframes popcorn {
   0% {
-    transform: translate(0, 0) scale(0.5);
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
     opacity: 0;
     animation-timing-function: ease-out;
   }
@@ -60,17 +60,17 @@ h1 {
     opacity: 1;
   }
   40% {
-    /* Peak height */
-    transform: translate(var(--tx), var(--ty)) scale(1.1);
+    /* Peak height - match tilt */
+    transform: translate(var(--tx), var(--ty)) scale(1.1) rotate(var(--rot));
     animation-timing-function: ease-in;
   }
   80% {
     opacity: 1;
   }
   100% {
-    /* Fall down */
+    /* Fall down - tumble */
     transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) + 800px))
-      rotate(var(--rot)) scale(0.8);
+      rotate(var(--rot-end)) scale(0.8);
     opacity: 0;
   }
 }
