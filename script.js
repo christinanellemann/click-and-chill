@@ -75,8 +75,18 @@ let activeTimeout;
 
 // Audio Context for synthetic pop sound
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let isSoundEnabled = true;
+
+const soundToggleBtn = document.getElementById('sound-toggle');
+soundToggleBtn.addEventListener('click', (e) => {
+    isSoundEnabled = !isSoundEnabled;
+    soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
+    e.stopPropagation(); // Prevent clicking through to other elements if any overlap
+});
 
 function playPopSound() {
+    if (!isSoundEnabled) return;
+
     // Resume context if suspended (browser auto-play policy)
     if (audioCtx.state === 'suspended') {
         audioCtx.resume();
