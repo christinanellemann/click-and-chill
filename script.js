@@ -73,6 +73,41 @@ let count = 0;
 let chillPoints = 0;
 let activeTimeout;
 
+// Audio Context for synthetic pop sound
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playPopSound() {
+    // Resume context if suspended (browser auto-play policy)
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+
+    const t = audioCtx.currentTime;
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'triangle';
+    
+    // "Pop" frequency sweep
+    // Slight randomization to make it sound organic
+    const startFreq = 500 + Math.random() * 200; // Middle pitch range
+    const endFreq = 80 + Math.random() * 50;
+    
+    oscillator.frequency.setValueAtTime(startFreq, t);
+    oscillator.frequency.exponentialRampToValueAtTime(endFreq, t + 0.1);
+
+    // Gain envelope (Click/Pop shape)
+    gainNode.gain.setValueAtTime(0, t);
+    gainNode.gain.linearRampToValueAtTime(0.4, t + 0.01); // Slightly softer attack than Triangle, harder than Sine
+    gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.1); // Decay
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start(t);
+    oscillator.stop(t + 0.1);
+}
+
 // Activate immediately on press
 circle.addEventListener('mousedown', () => {
     circle.classList.add('active');
@@ -84,6 +119,7 @@ circle.addEventListener('touchstart', () => {
 }, { passive: true });
 
 circle.addEventListener('click', (e) => {
+    playPopSound();
     count++;
     counterElement.textContent = count;
 
