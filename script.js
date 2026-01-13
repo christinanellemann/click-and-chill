@@ -84,13 +84,31 @@ soundToggleBtn.addEventListener('click', (e) => {
     e.stopPropagation(); // Prevent clicking through to other elements if any overlap
 });
 
-const colors = ['#DAF0FF', '#FFE0E9', '#E0FFE4', '#FFFFE0', '#F0E0FF'];
-let colorIndex = 0;
 const bgToggleBtn = document.getElementById('bg-toggle');
+const colorDropdown = document.getElementById('color-dropdown');
+const colorOptions = document.querySelectorAll('.color-option');
+
+// Toggle dropdown visibility
 bgToggleBtn.addEventListener('click', (e) => {
-    colorIndex = (colorIndex + 1) % colors.length;
-    document.body.style.backgroundColor = colors[colorIndex];
+    colorDropdown.classList.toggle('hidden');
     e.stopPropagation();
+});
+
+// Handle color selection
+colorOptions.forEach(option => {
+    option.addEventListener('click', (e) => {
+        const color = e.target.getAttribute('data-color');
+        document.body.style.backgroundColor = color;
+        colorDropdown.classList.add('hidden'); // Close after selection
+        e.stopPropagation();
+    });
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', () => {
+    if (!colorDropdown.classList.contains('hidden')) {
+        colorDropdown.classList.add('hidden');
+    }
 });
 
 function playPopSound() {
