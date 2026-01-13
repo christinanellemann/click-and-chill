@@ -4,6 +4,17 @@ const chillPointsElement = document.getElementById('chill-points');
 
 let count = 0;
 let chillPoints = 0;
+let activeTimeout;
+
+// Activate immediately on press
+circle.addEventListener('mousedown', () => {
+    circle.classList.add('active');
+    if (activeTimeout) clearTimeout(activeTimeout);
+});
+circle.addEventListener('touchstart', () => {
+    circle.classList.add('active');
+    if (activeTimeout) clearTimeout(activeTimeout);
+}, { passive: true });
 
 circle.addEventListener('click', (e) => {
     count++;
@@ -11,6 +22,15 @@ circle.addEventListener('click', (e) => {
 
     chillPoints++;
     chillPointsElement.textContent = chillPoints;
+
+    // Extend active state after release
+    circle.classList.add('active');
+    if (activeTimeout) {
+        clearTimeout(activeTimeout);
+    }
+    activeTimeout = setTimeout(() => {
+        circle.classList.remove('active');
+    }, 1000);
 
     // Create particle
     const rect = circle.getBoundingClientRect();

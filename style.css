@@ -29,6 +29,10 @@ body {
   transform: scale(0.95);
 }
 
+.circle.active {
+  background-image: url("popcornActive.PNG");
+}
+
 h1 {
   font-size: 2em;
   color: #333;
