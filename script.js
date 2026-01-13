@@ -218,3 +218,50 @@ function createPhysicsCorn(x, y) {
     Composite.add(world, body);
     bodiesDomPairs.push({ body, element });
 }
+
+// --- Save/Load System ---
+function saveGame() {
+    const gameData = {
+        count: count,
+        chillPoints: chillPoints,
+        isSoundEnabled: isSoundEnabled,
+        backgroundColor: document.body.style.backgroundColor
+    };
+    localStorage.setItem('clickAndChillSave', JSON.stringify(gameData));
+}
+
+function loadGame() {
+    const savedData = localStorage.getItem('clickAndChillSave');
+    if (savedData) {
+        const gameData = JSON.parse(savedData);
+        
+        // Restore values
+        if (gameData.count) {
+            count = gameData.count;
+            counterElement.textContent = count;
+        }
+        
+        if (gameData.chillPoints) {
+            chillPoints = gameData.chillPoints;
+            chillPointsElement.textContent = chillPoints;
+        }
+        
+        if (typeof gameData.isSoundEnabled !== 'undefined') {
+            isSoundEnabled = gameData.isSoundEnabled;
+            soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
+        }
+        
+        if (gameData.backgroundColor) {
+            document.body.style.backgroundColor = gameData.backgroundColor;
+        }
+    }
+}
+
+// Auto-save every 10 seconds
+setInterval(saveGame, 10000);
+
+// Save when closing
+window.addEventListener('beforeunload', saveGame);
+
+// Load immediately on startup
+loadGame();
