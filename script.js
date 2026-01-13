@@ -178,39 +178,88 @@ circle.addEventListener('click', (e) => {
 
 // Audio Context for synthetic pop sound
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let isSoundEnabled = true;
 
-// Rain / Lo-fi Music Logic
-let isRainEnabled = false;
+// Audio State
+let isMuted = false; // Master mute
+let isSfxMuted = false;
+let isMusicMuted = false;
+let sfxVolume = 0.5;
+let musicVolume = 0.5;
+
+// Music Setup
 const rainAudio = new Audio('lofi-rain-lofi-music-458077.mp3');
 rainAudio.loop = true;
-rainAudio.volume = 0.5; // Set a comfortable level
+rainAudio.volume = musicVolume;
 
+// Elements
 const soundToggleBtn = document.getElementById('sound-toggle');
-soundToggleBtn.addEventListener('click', (e) => {
-    isSoundEnabled = !isSoundEnabled;
-    soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
-    e.stopPropagation(); 
-});
+const sfxMuteBtn = document.getElementById('sfx-mute-btn');
+const musicMuteBtn = document.getElementById('music-mute-btn');
+const sfxSlider = document.getElementById('sfx-slider');
+const musicSlider = document.getElementById('music-slider');
 
-const rainToggleBtn = document.getElementById('rain-toggle');
+function updateAudioState() {
+    // Visuals for Master Toggle
+    soundToggleBtn.textContent = isMuted ? '🔇' : '🔊';
+    soundToggleBtn.style.opacity = isMuted ? '0.5' : '1';
 
-function toggleRain() {
-    isRainEnabled = !isRainEnabled;
-    rainToggleBtn.textContent = isRainEnabled ? '🌧️' : '☁️';
+    // Visuals for Mini Toggles
+    sfxMuteBtn.textContent = isSfxMuted ? '🔇' : '🔊';
+    sfxMuteBtn.style.opacity = isSfxMuted ? '0.5' : '1';
+
+    musicMuteBtn.textContent = isMusicMuted ? '🔇' : '🎵';
+    musicMuteBtn.style.opacity = isMusicMuted ? '0.5' : '1';
+
+    // Music control (Master Mute OVERRIDES Individual Mute)
+    const effectiveMusicMute = isMuted || isMusicMuted;
     
-    if (isRainEnabled) {
-        rainAudio.play().catch(e => console.log("Audio play failed (waiting for interaction):", e));
+    if (!effectiveMusicMute && musicVolume > 0) {
+        rainAudio.volume = musicVolume;
+        if (rainAudio.paused) {
+            rainAudio.play().catch(e => { /* Autoplay restriction */ });
+        }
     } else {
         rainAudio.pause();
     }
 }
 
-rainToggleBtn.addEventListener('click', (e) => {
-    toggleRain();
-    saveGame(); 
+// Master Mute Toggle
+soundToggleBtn.addEventListener('click', (e) => {
+    isMuted = !isMuted;
+    updateAudioState();
+    saveGame();
     e.stopPropagation();
 });
+
+// SFX Mute Toggle
+sfxMuteBtn.addEventListener('click', (e) => {
+    isSfxMuted = !isSfxMuted;
+    updateAudioState();
+    saveGame();
+    e.stopPropagation();
+});
+
+// Music Mute Toggle
+musicMuteBtn.addEventListener('click', (e) => {
+    isMusicMuted = !isMusicMuted;
+    updateAudioState();
+    saveGame();
+    e.stopPropagation();
+});
+
+// Sliders
+sfxSlider.addEventListener('input', (e) => {
+    sfxVolume = parseFloat(e.target.value);
+    saveGame();
+});
+
+musicSlider.addEventListener('input', (e) => {
+    musicVolume = parseFloat(e.target.value);
+    updateAudioState();
+    saveGame();
+});
+    
+// Removed rainToggleBtn listeners as UI is replaced
 
 const bgToggleBtn = document.getElementById('bg-toggle');
 const colorDropdown = document.getElementById('color-dropdown');
@@ -268,11 +317,12 @@ resetGameBtn.addEventListener('click', (e) => {
 
 function playPopSound() {
     // Attempt to start rain if enabled but not playing (e.g. initial touch requirement)
-    if (isRainEnabled && rainAudio.paused) {
+    // Check specific Music Mute AND Master Mute
+    if (!isMuted && !isMusicMuted && musicVolume > 0 && rainAudio.paused) {
         rainAudio.play().catch(e => { /* Ignore pending play errors */ });
     }
 
-    if (!isSoundEnabled) return;
+    if (isMuted || isSfxMuted) return;
 
     // Resume context if suspended (browser auto-play policy)
     if (audioCtx.state === 'suspended') {
@@ -295,7 +345,9 @@ function playPopSound() {
 
     // Gain envelope (Click/Pop shape)
     gainNode.gain.setValueAtTime(0, t);
-    gainNode.gain.linearRampToValueAtTime(0.4, t + 0.01); // Slightly softer attack than Triangle, harder than Sine
+    // Use sfxVolume state
+    const peakGain = 0.4 * sfxVolume;
+    gainNode.gain.linearRampToValueAtTime(peakGain, t + 0.01); 
     gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.1); // Decay
 
     oscillator.connect(gainNode);
@@ -351,8 +403,11 @@ function saveGame() {
     const gameData = {
         count: count,
         chillPoints: chillPoints,
-        isSoundEnabled: isSoundEnabled,
-        isRainEnabled: isRainEnabled,
+        isMuted: isMuted,
+        isSfxMuted: isSfxMuted,
+        isMusicMuted: isMusicMuted,
+        sfxVolume: sfxVolume,
+        musicVolume: musicVolume,
         autoPoppers: autoPoppers,
         clickPower: clickPower,
         backgroundColor: document.body.style.backgroundColor
@@ -374,14 +429,26 @@ function loadGame() {
             chillPoints = gameData.chillPoints;
         }
         
-        if (typeof gameData.isSoundEnabled !== 'undefined') {
-            isSoundEnabled = gameData.isSoundEnabled;
-            soundToggleBtn.textContent = isSoundEnabled ? '🔊' : '🔇';
+        if (typeof gameData.isMuted !== 'undefined') {
+            isMuted = gameData.isMuted;
         }
 
-        if (typeof gameData.isRainEnabled !== 'undefined') {
-            isRainEnabled = gameData.isRainEnabled;
-            rainToggleBtn.textContent = isRainEnabled ? '🌧️' : '☁️';
+        if (typeof gameData.isSfxMuted !== 'undefined') {
+            isSfxMuted = gameData.isSfxMuted;
+        }
+
+        if (typeof gameData.isMusicMuted !== 'undefined') {
+            isMusicMuted = gameData.isMusicMuted;
+        }
+
+        if (typeof gameData.sfxVolume !== 'undefined') {
+            sfxVolume = gameData.sfxVolume;
+            sfxSlider.value = sfxVolume;
+        }
+
+        if (typeof gameData.musicVolume !== 'undefined') {
+            musicVolume = gameData.musicVolume;
+            musicSlider.value = musicVolume;
         }
 
         if (gameData.backgroundColor) {
@@ -396,7 +463,12 @@ function loadGame() {
             clickPower = gameData.clickPower;
         }
         
+        // Legacy support: map old keys if needed, or just let them reset
+        // The old save used isSoundEnabled and isRainEnabled.
+        // We can safely ignore them as the new UI overrides the logic.
+        
         updateUI();
+        updateAudioState();
     }
 }
 
