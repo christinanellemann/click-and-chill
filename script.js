@@ -180,7 +180,7 @@ circle.addEventListener('click', (e) => {
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 // Audio State
-let isMuted = false; // Master mute
+// Master mute is now a derived state, not a source of truth
 let isSfxMuted = false;
 let isMusicMuted = false;
 let sfxVolume = 0.5;
@@ -199,9 +199,12 @@ const sfxSlider = document.getElementById('sfx-slider');
 const musicSlider = document.getElementById('music-slider');
 
 function updateAudioState() {
+    // Derived Master State
+    const isMasterMuted = isSfxMuted && isMusicMuted;
+
     // Visuals for Master Toggle
-    soundToggleBtn.textContent = isMuted ? '🔇' : '🔊';
-    soundToggleBtn.style.opacity = isMuted ? '0.5' : '1';
+    soundToggleBtn.textContent = isMasterMuted ? '🔇' : '🔊';
+    soundToggleBtn.style.opacity = isMasterMuted ? '0.5' : '1';
 
     // Visuals for Mini Toggles
     sfxMuteBtn.textContent = isSfxMuted ? '🔇' : '🔊';
@@ -210,10 +213,8 @@ function updateAudioState() {
     musicMuteBtn.textContent = isMusicMuted ? '🔇' : '🎵';
     musicMuteBtn.style.opacity = isMusicMuted ? '0.5' : '1';
 
-    // Music control (Master Mute OVERRIDES Individual Mute)
-    const effectiveMusicMute = isMuted || isMusicMuted;
-    
-    if (!effectiveMusicMute && musicVolume > 0) {
+    // Music control (Only depends on individual state)
+    if (!isMusicMuted && musicVolume > 0) {
         rainAudio.volume = musicVolume;
         if (rainAudio.paused) {
             rainAudio.play().catch(e => { /* Autoplay restriction */ });
@@ -223,9 +224,20 @@ function updateAudioState() {
     }
 }
 
-// Master Mute Toggle
+// Master Mute Toggle logic:
+// If EVERYTHING is muted -> Unmute everything
+// If ANYTHING is playing -> Mute everything
 soundToggleBtn.addEventListener('click', (e) => {
-    isMuted = !isMuted;
+    const isMasterMuted = isSfxMuted && isMusicMuted;
+    
+    if (isMasterMuted) {
+        isSfxMuted = false;
+        isMusicMuted = false;
+    } else {
+        isSfxMuted = true;
+        isMusicMuted = true;
+    }
+    
     updateAudioState();
     saveGame();
     e.stopPropagation();
@@ -316,13 +328,13 @@ resetGameBtn.addEventListener('click', (e) => {
 
 
 function playPopSound() {
-    // Attempt to start rain if enabled but not playing (e.g. initial touch requirement)
-    // Check specific Music Mute AND Master Mute
-    if (!isMuted && !isMusicMuted && musicVolume > 0 && rainAudio.paused) {
+    // Attempt to start rain if enabled but not playing
+    // Check specific Music Mute only (Master logic is now baked into isMusicMuted via UI)
+    if (!isMusicMuted && musicVolume > 0 && rainAudio.paused) {
         rainAudio.play().catch(e => { /* Ignore pending play errors */ });
     }
 
-    if (isMuted || isSfxMuted) return;
+    if (isSfxMuted) return;
 
     // Resume context if suspended (browser auto-play policy)
     if (audioCtx.state === 'suspended') {
@@ -403,7 +415,7 @@ function saveGame() {
     const gameData = {
         count: count,
         chillPoints: chillPoints,
-        isMuted: isMuted,
+        // Removed explicit isMuted as it is derived
         isSfxMuted: isSfxMuted,
         isMusicMuted: isMusicMuted,
         sfxVolume: sfxVolume,
@@ -429,8 +441,10 @@ function loadGame() {
             chillPoints = gameData.chillPoints;
         }
         
-        if (typeof gameData.isMuted !== 'undefined') {
-            isMuted = gameData.isMuted;
+        // Legacy support: if old save has isMuted=true but no individual settings, honor it
+        if (typeof gameData.isMuted !== 'undefined' && gameData.isMuted) {
+            isSfxMuted = true;
+            isMusicMuted = true;
         }
 
         if (typeof gameData.isSfxMuted !== 'undefined') {
