@@ -370,5 +370,12 @@ setInterval(saveGame, 10000);
 // Save when closing
 window.addEventListener('beforeunload', saveGame);
 
+// Sync across tabs: Reload data when another tab saves
+window.addEventListener('storage', (e) => {
+    if (e.key === 'clickAndChillSave') {
+        loadGame();
+    }
+});
+
 // Load immediately on startup
 loadGame();
