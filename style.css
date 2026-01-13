@@ -13,6 +13,8 @@ body {
 }
 
 .circle {
+  position: relative;
+  z-index: 10;
   width: 500px;
   height: 500px;
   background-image: url("popcorn.PNG");
@@ -40,6 +42,7 @@ h1 {
 
 .particle {
   position: absolute;
+  z-index: 1;
   width: 100px;
   height: 100px;
   background-image: url("corn.PNG");
@@ -47,32 +50,10 @@ h1 {
   background-repeat: no-repeat;
   background-position: center;
   pointer-events: none;
-  animation: popcorn 0.8s forwards;
-}
-
-@keyframes popcorn {
-  0% {
-    transform: translate(0, 0) scale(0.5) rotate(0deg);
-    opacity: 0;
-    animation-timing-function: ease-out;
-  }
-  10% {
-    opacity: 1;
-  }
-  40% {
-    /* Peak height - match tilt */
-    transform: translate(var(--tx), var(--ty)) scale(1.1) rotate(var(--rot));
-    animation-timing-function: ease-in;
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    /* Fall down - tumble */
-    transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) + 800px))
-      rotate(var(--rot-end)) scale(0.8);
-    opacity: 0;
-  }
+  /* animation removed - physics controlled */
+  top: 0;
+  left: 0;
+  will-change: transform;
 }
 
 #bottom-ui {
