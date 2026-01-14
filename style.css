@@ -13,10 +13,12 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 96px; /* Adjust size as needed, original is large */
+  width: 96px;
   pointer-events: none;
   z-index: 9999;
   will-change: transform;
+  margin-top: -22px;
+  margin-left: -32px;
 }
 
 .container {
