@@ -11,7 +11,9 @@ const Engine = Matter.Engine,
       Composite = Matter.Composite;
 
 // Create engine
-const engine = Engine.create();
+const engine = Engine.create({
+    enableSleeping: true
+});
 const world = engine.world;
 
 // Start runner
@@ -379,7 +381,8 @@ function createPhysicsCorn(x, y) {
         restitution: 0.4, // Bounciness (0-1)
         friction: 0.5,
         density: 0.002,
-        angle: Math.random() * Math.PI * 2
+        angle: Math.random() * Math.PI * 2,
+        sleepThreshold: 30 // Sleep after ~0.5s of being still
     });
 
     // Add initial "Explosion" velocity
