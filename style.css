@@ -6,6 +6,17 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #daf0ff;
+  cursor: none;
+}
+
+#custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 96px; /* Adjust size as needed, original is large */
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
 }
 
 .container {
@@ -22,7 +33,7 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   margin: 20px auto;
-  cursor: pointer;
+  cursor: none;
   transition: transform 0.1s;
   user-select: none; /* Prevent text selection on rapid clicks */
 }
@@ -94,7 +105,7 @@ h1 {
   align-items: center;
   font-size: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  cursor: none;
   user-select: none;
   transition: transform 0.1s;
   flex-shrink: 0; /* Prevent shrinking */
@@ -137,7 +148,7 @@ h1 {
 
 .mini-mute-btn {
   font-size: 1.2rem;
-  cursor: pointer;
+  cursor: none;
   user-select: none;
   width: 25px;
   text-align: center;
@@ -163,7 +174,7 @@ h1 {
 
 input[type="range"] {
   width: 100%;
-  cursor: pointer;
+  cursor: none;
 }
 
 /* Remove rain toggle styles as it is replaced by slider */
@@ -178,7 +189,7 @@ input[type="range"] {
   align-items: center;
   font-size: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  cursor: none;
   user-select: none;
   transition: transform 0.1s;
 }
@@ -213,7 +224,7 @@ input[type="range"] {
   align-items: center;
   font-size: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  cursor: none;
   user-select: none;
   transition: transform 0.1s;
 }
@@ -247,7 +258,7 @@ input[type="range"] {
   border: none;
   padding: 8px 12px;
   border-radius: 5px;
-  cursor: pointer;
+  cursor: none;
   font-size: 0.9rem;
   width: 100%;
   transition: background-color 0.2s;
@@ -331,7 +342,7 @@ input[type="range"] {
   border: none;
   padding: 5px 10px;
   border-radius: 15px;
-  cursor: pointer;
+  cursor: none;
   font-size: 0.8rem;
   font-weight: bold;
   white-space: nowrap;
@@ -382,7 +393,7 @@ input[type="range"] {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  cursor: pointer;
+  cursor: none;
   border: 2px solid rgba(0, 0, 0, 0.1);
   transition: transform 0.1s;
 }

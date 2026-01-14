@@ -501,3 +501,20 @@ window.addEventListener('storage', (e) => {
 
 // Load immediately on startup
 loadGame();
+
+// --- Custom Cursor Logic ---
+const customCursor = document.getElementById('custom-cursor');
+if (customCursor) {
+    document.addEventListener('mousemove', (e) => {
+        customCursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    });
+
+    document.addEventListener('mousedown', () => {
+        customCursor.src = 'CursorActive.PNG';
+    });
+
+    document.addEventListener('mouseup', () => {
+        customCursor.src = 'Cursor.PNG';
+    });
+}
+
